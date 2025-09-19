@@ -12,7 +12,6 @@ pub extern "C" fn _start() {
     let mut stdout = VGA::new();
 
     write(&mut stdout, b"Hello, world!\n");
-    write(&mut stdout, b"Hello, world! 2");
     halt()
 }
 
