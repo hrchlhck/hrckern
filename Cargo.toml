@@ -1,0 +1,22 @@
+[package]
+name = "hrckern"
+version = "0.1.0"
+edition = "2024"
+authors = ["Pedro Rocha Horchulhack <pedro@prhrck.com>"]
+
+[package.metadata.bootimage]
+run-command = ["qemu-system-x86_64", "-drive", "format=raw,file=target/hrckern/debug/bootimage-hrckern.bin"]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[[bin]]
+name = "hrckern"
+test = false
+bench = false
+
+[dependencies]
+bootloader = {version="0.9"}
