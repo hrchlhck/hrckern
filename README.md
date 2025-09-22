@@ -10,7 +10,7 @@ Kernel simples feito em Rust. Baseado no livro [Writing an OS in Rust](https://o
 - O código é desenvolvido sobre a arquitetura x86
 
 # TODO
-- [ ] Implementar bootloader com suporte a multiboot e long mode
+- [x] Implementar bootloader com suporte a multiboot e long mode (Implementação do próprio livro)
 - [ ] Buffer VGA
 - [ ] Interrupções
 - [ ] UEFI e ACPI
