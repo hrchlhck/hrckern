@@ -3,7 +3,8 @@ all: assemble iso clean
 assemble:
 	nasm -f elf64 multiboot_header.asm
 	nasm -f elf64 boot.asm
-	ld -n -o kernel.bin -T linker.ld multiboot_header.o boot.o
+	nasm -f elf64 longmode.asm
+	ld -n -o kernel.bin -T linker.ld multiboot_header.o boot.o longmode.o libhrckern.a
 
 iso:
 	mkdir -p isofiles/boot/grub
