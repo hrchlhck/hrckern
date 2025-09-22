@@ -1,6 +1,7 @@
-const MAX_SCREEN_WIDTH: usize = 128;
-const MAX_SCREEN_HEIGHT: usize = 128;
+const MAX_SCREEN_WIDTH: usize = 80;
+const MAX_SCREEN_HEIGHT: usize = 25;
 
+#[allow(dead_code)]
 pub enum Color {
     Black,
     Blue,
@@ -29,6 +30,15 @@ pub struct VGA {
     cursor: usize,
 }
 
+impl Color {
+    pub fn combine(background: Self, foreground: Self) -> u8 {
+        let bg = background as u8;
+        let fg = foreground as u8;
+
+        (bg << 4) | fg
+    }
+}
+
 impl Into<u8> for Color {
     fn into(self) -> u8 {
         match self {
@@ -55,7 +65,7 @@ impl Into<u8> for Color {
 impl VGA {
     pub fn new() -> Self {
         VGA { 
-            buffer: 0xB8000 as *mut u8, 
+            buffer: 0xB8000 as *mut u8,
             row_pos: 0, 
             col_pos: 0, 
             max_rows: MAX_SCREEN_HEIGHT, 
@@ -64,25 +74,37 @@ impl VGA {
         }
     }
 
-    fn newline(&mut self) {
-        self.col_pos = 0;
+    pub fn clear(&mut self) {
+        for i in 0..(self.max_cols * self.max_rows) {
+            unsafe {
+                *self.buffer.offset(i as isize * 2) = b' ';
+                *self.buffer.offset(i as isize * 2 + 1) = Color::combine(Color::Blue, Color::Black);
+            }
+        }
+    }
+
+    pub fn newline(&mut self) {
         self.row_pos += 1;
+        self.col_pos = 0;
+        self.cursor = (self.row_pos * self.max_cols) * 2;
     }
 
-    fn calc_pos(&mut self, offset: usize) {
-        if self.col_pos == self.max_cols - 1 {
-            self.newline();
-        }
-
-        self.cursor = (offset + self.col_pos) + (self.row_pos * self.max_rows);
+    fn step(&mut self) {
         self.col_pos += 1;
+        if self.col_pos >= self.max_cols {
+            self.col_pos = 0;
+            self.row_pos += 1;
+        }
+        self.cursor = (self.row_pos * self.max_cols + self.col_pos) * 2;
     }
 
-    pub fn offset(&mut self, i: usize, byte: u8, color: Color) {
+    pub fn offset(&mut self, byte: u8, background: Color, foreground: Color) {
+        let color = Color::combine(background, foreground);
+
         unsafe {
-            self.calc_pos(i);
-            *self.buffer.offset(self.cursor as isize) = byte;
-            *self.buffer.offset(self.cursor as isize + 1) = color as u8;
+            *self.buffer.offset((self.cursor) as isize) = byte;
+            *self.buffer.offset((self.cursor + 1) as isize) = color as u8;
         }
+        self.step();
     }
 }

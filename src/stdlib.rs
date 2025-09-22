@@ -3,16 +3,17 @@ use super::vga::*;
 use core::panic::PanicInfo;
 use core::arch::asm;
 
-const DEFAULT_COLOR: Color = Color::LightPurple;
-
 #[panic_handler]
 pub fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
 
 pub fn write(fd: &mut VGA, buff: &[u8]) {
-    for (i, &byte) in buff.iter().enumerate() {
-        fd.offset(i, byte, DEFAULT_COLOR);
+    for &byte in buff.iter() {
+        match &byte {
+            b'\n' => {fd.newline();}
+            _ => {fd.offset(byte, Color::LightBlue, Color::White);}
+        }
     }
 }
 

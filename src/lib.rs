@@ -8,10 +8,13 @@ use stdlib::{write, halt};
 use vga::VGA;
 
 #[unsafe(no_mangle)]
-pub extern "C" fn _start() {
+pub extern "C" fn kmain() {
     let mut stdout = VGA::new();
 
-    write(&mut stdout, b"Hello, world!\n");
+    stdout.clear();
+
+    write(&mut stdout, b"Hello, world!\n\n");
+    write(&mut stdout, b"Hello, world!");
     halt()
 }
 
