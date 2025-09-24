@@ -1,6 +1,7 @@
 use crate::constants::*;
 
 #[allow(dead_code)]
+#[derive(Clone, Copy)]
 pub enum Color {
     Black,
     Blue,
@@ -61,6 +62,30 @@ impl Into<u8> for Color {
     }
 }
 
+impl From<u8> for Color {
+    fn from(item: u8) -> Color {
+        match item {
+            0x0 => Color::Black,
+            0x1 => Color::Blue,
+            0x2 => Color::Green,
+            0x3 => Color::Cyan,
+            0x4 => Color::Red,
+            0x5 => Color::Purple,
+            0x6 => Color::Brown,
+            0x7 => Color::Gray,
+            0x8 => Color::DarkGray,
+            0x9 => Color::LightBlue,
+            0xA => Color::LightGreen,
+            0xB => Color::LightCyan,
+            0xC => Color::LightRed,
+            0xD => Color::LightPurple,
+            0xE => Color::Yellow,
+            0xF => Color::White,
+            _ => Color::White
+        }
+    }
+}
+
 impl VGA {
     pub fn new() -> Self {
         VGA { 
@@ -78,6 +103,17 @@ impl VGA {
             unsafe {
                 *self.buffer.offset(i as isize * 2) = b' ';
                 *self.buffer.offset(i as isize * 2 + 1) = Color::combine(Color::Blue, Color::Black);
+            }
+        }
+    }
+
+    pub fn change_background_color(&mut self, bg_color: Color) {
+        for i in 0..(self.max_cols * self.max_rows) {
+            let i: isize = i as isize * 2 + 1;
+
+            unsafe {
+                let foreground: u8 = *self.buffer.offset(i) & 0xF;
+                *self.buffer.offset(i) = Color::combine(bg_color, Color::from(foreground));
             }
         }
     }
