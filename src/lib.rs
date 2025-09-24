@@ -3,19 +3,21 @@
 
 mod stdlib;
 mod vga;
+mod constants;
 
-use stdlib::{write, halt};
-use vga::VGA;
+use stdlib::{write, halt, STDOUT};
 
 #[unsafe(no_mangle)]
 pub extern "C" fn kmain() {
-    let mut stdout = VGA::new();
+    let stdout = &raw mut STDOUT;
 
-    stdout.clear();
+    unsafe{ 
+        (*stdout).clear();
+    }
 
-    write(&mut stdout, b"Hello, world!\n\n");
-    write(&mut stdout, b"Hello, world!");
-    halt()
+    write(b"Hello, world!\n\n");
+    write(b"Hello, world!");
+    kpanic!("aaaaa");
 }
 
 

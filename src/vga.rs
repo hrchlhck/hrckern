@@ -1,5 +1,4 @@
-const MAX_SCREEN_WIDTH: usize = 80;
-const MAX_SCREEN_HEIGHT: usize = 25;
+use crate::constants::*;
 
 #[allow(dead_code)]
 pub enum Color {
@@ -22,12 +21,12 @@ pub enum Color {
 }
 
 pub struct VGA {
-    buffer: *mut u8,
-    col_pos: usize,
-    row_pos: usize,
-    max_rows: usize,
-    max_cols: usize,
-    cursor: usize,
+    pub buffer: *mut u8,
+    pub col_pos: usize,
+    pub row_pos: usize,
+    pub max_rows: usize,
+    pub max_cols: usize,
+    pub cursor: usize,
 }
 
 impl Color {
