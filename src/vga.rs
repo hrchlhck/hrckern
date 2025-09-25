@@ -133,6 +133,14 @@ impl VGA {
         self.cursor = (self.row_pos * self.max_cols + self.col_pos) * 2;
     }
 
+    pub fn set_char_at(&mut self, c: u8, color: u8, x: usize, y: usize) {
+        let offset = (x * self.max_cols + y) * 2;
+        unsafe {
+            *self.buffer.offset(offset as isize) = c;
+            *self.buffer.offset((offset + 1) as isize) = color;
+        }
+    }
+
     pub fn offset(&mut self, byte: u8, background: Color, foreground: Color) {
         let color = Color::combine(background, foreground);
 

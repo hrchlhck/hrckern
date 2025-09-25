@@ -5,6 +5,7 @@ mod stdlib;
 mod vga;
 mod constants;
 
+use core::arch::asm;
 use vga::Color;
 use stdlib::{write, halt, STDOUT};
 
@@ -12,16 +13,23 @@ use stdlib::{write, halt, STDOUT};
 pub extern "C" fn kmain() {
     let stdout = &raw mut STDOUT;
 
-    unsafe{ 
+    unsafe { 
         (*stdout).clear();
     }
 
     write(b"Hello, world!\n\n");
+    unsafe { 
+        (*stdout).change_background_color(Color::LightPurple);
+        let c = Color::combine(Color::LightPurple, Color::Black);
+        
+        for i in 0..80 {
+            (*stdout).set_char_at(b'-', c, 13, i);
+        }
+    }
+
     write(b"Hello, world!");
 
-    unsafe{ 
-        (*stdout).change_background_color(Color::LightGreen);
-    }
+    
 
     kpanic!("aaaaa");
 }
