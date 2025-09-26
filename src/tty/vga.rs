@@ -2,11 +2,13 @@ use super::color::{Color, ColorByte};
 
 pub struct VGA {
     pub buffer: *mut u8,
-    pub col_pos: usize,
-    pub row_pos: usize,
-    pub max_rows: usize,
-    pub max_cols: usize,
-    pub cursor: usize,
+    pub col_pos: u16,
+    pub row_pos: u16,
+    pub max_rows: u16,
+    pub max_cols: u16,
+    pub cursor: u16,
+    pub bg: Color,
+    pub fg: Color,
 }
 
 impl VGA {
@@ -14,7 +16,7 @@ impl VGA {
         for i in 0..(self.max_cols * self.max_rows) {
             unsafe {
                 *self.buffer.offset(i as isize * 2) = b'\0';
-                *self.buffer.offset(i as isize * 2 + 1) = ColorByte::new(Color::Blue, Color::Black).into();
+                *self.buffer.offset(i as isize * 2 + 1) = ColorByte::new(self.bg, self.fg).into();
             }
         }
     }
@@ -33,7 +35,11 @@ impl VGA {
     pub fn newline(&mut self) {
         self.row_pos += 1;
         self.col_pos = 0;
-        self.cursor = (self.row_pos * self.max_cols) * 2;
+        self.cursor = self.get_pos(self.col_pos, self.row_pos);
+    }
+
+    fn get_pos(&self, x: u16, y: u16) -> u16 {
+        ((x + self.max_cols * y) * 2) as u16
     }
 
     fn step(&mut self) {
@@ -42,11 +48,11 @@ impl VGA {
             self.col_pos = 0;
             self.row_pos += 1;
         }
-        self.cursor = (self.row_pos * self.max_cols + self.col_pos) * 2;
+        self.cursor = self.get_pos(self.col_pos, self.row_pos);
     }
 
-    pub fn set_char_at(&mut self, c: u8, color: Color, x: usize, y: usize) {
-        let offset = (x * self.max_cols + y) * 2;
+    pub fn set_char_at(&mut self, c: u8, color: Color, x: u16, y: u16) {
+        let offset = self.get_pos(x, y);
         let current_bg_color: Color = self.get_current_bg_color();
         let new_color: ColorByte = ColorByte::new(current_bg_color, color);
 
@@ -62,9 +68,8 @@ impl VGA {
         }
     }
 
-    pub fn offset(&mut self, byte: u8, foreground: Color) {
-        let current_bg_color: Color = self.get_current_bg_color();
-        let color = ColorByte::new(current_bg_color, foreground);
+    pub fn putc(&mut self, byte: u8) {
+        let color = ColorByte::new(self.bg, self.fg);
 
         unsafe {
             *self.buffer.offset((self.cursor) as isize) = byte;
@@ -73,8 +78,8 @@ impl VGA {
         self.step();
     }
 
-    pub fn offset_err(&mut self, byte: u8) {
-        let color = ColorByte::new(Color::Red, Color::White);
+    pub fn putc_color(&mut self, byte: u8, background: Color, foreground: Color) {
+        let color = ColorByte::new(background, foreground);
 
         unsafe {
             *self.buffer.offset((self.cursor) as isize) = byte;

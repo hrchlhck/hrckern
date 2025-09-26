@@ -3,10 +3,9 @@
 
 mod stdlib;
 mod tty;
-mod constants;
 
 use tty::color::Color;
-use stdlib::{write, halt, STDOUT};
+use stdlib::{write, STDOUT};
 
 #[unsafe(no_mangle)]
 pub extern "C" fn kmain() {
@@ -17,10 +16,8 @@ pub extern "C" fn kmain() {
     }
 
     unsafe { 
-        (*stdout).change_background_color(Color::LightPurple);
-        
         for i in 0..80 {
-            (*stdout).set_char_at(b'-', Color::Black, 13, i);
+            (*stdout).set_char_at(b'-', Color::White, i, 13);
         }
     }
 
