@@ -16,7 +16,7 @@ Kernel simples feito em Rust. Baseado no livro [Writing an OS in Rust](https://o
   - [x] Escrever `&str`
   - [x] Quebra de linha
   - [x] Alterar cor do terminal
-  - [ ] Implementação `format!` e `println!` 
+  - [x] Implementação `format!` e `println!` 
   - [ ] Conversão de `char` para inteiro
   - [ ] Conversão de `char` para float
   - [x] Inserir `char` em uma posição específica

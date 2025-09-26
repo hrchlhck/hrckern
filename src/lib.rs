@@ -1,11 +1,11 @@
 #![no_std]
 #![no_main]
 
-mod stdlib;
+mod std;
 mod tty;
 
 use tty::color::Color;
-use stdlib::{write, STDOUT};
+use std::STDOUT;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn kmain() {
@@ -21,11 +21,9 @@ pub extern "C" fn kmain() {
         }
     }
 
-    write(b"Hello, world!\n");
+    println!("hello {}", "ola");
 
-    kprintln!(b"hello!");
-
-    kpanic!("aaaaa");
+    panic!("ee");
 }
 
 
