@@ -1,4 +1,6 @@
-use super::vga::*;
+use super::tty::vga::VGA;
+use super::tty::color::Color;
+
 use super::constants::*;
 
 use core::panic::PanicInfo;
@@ -20,6 +22,14 @@ macro_rules! kpanic {
     };
 }
 
+#[macro_export]
+macro_rules! kprintln {
+    ( $($x:expr),* ) => {
+            write($($x)*);
+            write(b"\n");
+    }
+}
+
 #[panic_handler]
 pub fn panic_handler(_info: &PanicInfo) -> ! {
     let buffer: &[u8] = _info.message().as_str().unwrap().as_bytes();
@@ -32,7 +42,7 @@ pub fn panic_handler(_info: &PanicInfo) -> ! {
                     (*stdout).newline();
                 }
                 _ => {
-                    (*stdout).offset(byte, Color::Red, Color::White);
+                    (*stdout).offset_err(byte);
                 }
             }
         }
@@ -50,7 +60,7 @@ pub fn write(buff: &[u8]) {
                     (*stdout).newline();
                 }
                 _ => {
-                    (*stdout).offset(byte, Color::LightBlue, Color::White);
+                    (*stdout).offset(byte, Color::White);
                 }
             }
         }

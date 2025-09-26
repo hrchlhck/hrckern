@@ -2,11 +2,10 @@
 #![no_main]
 
 mod stdlib;
-mod vga;
+mod tty;
 mod constants;
 
-use core::arch::asm;
-use vga::Color;
+use tty::color::Color;
 use stdlib::{write, halt, STDOUT};
 
 #[unsafe(no_mangle)]
@@ -17,19 +16,17 @@ pub extern "C" fn kmain() {
         (*stdout).clear();
     }
 
-    write(b"Hello, world!\n\n");
     unsafe { 
         (*stdout).change_background_color(Color::LightPurple);
-        let c = Color::combine(Color::LightPurple, Color::Black);
         
         for i in 0..80 {
-            (*stdout).set_char_at(b'-', c, 13, i);
+            (*stdout).set_char_at(b'-', Color::Black, 13, i);
         }
     }
 
-    write(b"Hello, world!");
+    write(b"Hello, world!\n");
 
-    
+    kprintln!(b"hello!");
 
     kpanic!("aaaaa");
 }
