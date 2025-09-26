@@ -1,4 +1,5 @@
 use super::color::{Color, ColorByte};
+use core::fmt;
 
 pub struct VGA {
     pub buffer: *mut u8,
@@ -9,8 +10,11 @@ pub struct VGA {
     pub cursor: u16,
     pub bg: Color,
     pub fg: Color,
+    pub default_bg: Color,
+    pub default_fg: Color,
 }
 
+#[allow(unused)]
 impl VGA {
     pub fn clear(&mut self) {
         for i in 0..(self.max_cols * self.max_rows) {
@@ -19,6 +23,16 @@ impl VGA {
                 *self.buffer.offset(i as isize * 2 + 1) = ColorByte::new(self.bg, self.fg).into();
             }
         }
+    }
+
+    pub fn reset_color(&mut self) {
+        self.bg = self.default_bg;
+        self.fg = self.default_fg;
+    }
+
+    pub fn set_color(&mut self, color: ColorByte) {
+        self.bg = color.bg();
+        self.fg = color.fg();
     }
 
     pub fn change_background_color(&mut self, bg_color: Color) {
@@ -86,5 +100,23 @@ impl VGA {
             *self.buffer.offset((self.cursor + 1) as isize) = color.into();
         }
         self.step();
+    }
+
+    // https://os.phil-opp.com/vga-text-mode/#printing
+    pub fn write_str(&mut self, s: &str) {
+        for b in s.bytes() {
+            match b {
+                b'\n' => self.newline(),
+                0x20..=0x7e => self.putc(b),
+                _ => self.putc(0xfe), // not part of printable ASCII range
+            }
+        }
+    }
+}
+
+impl fmt::Write for VGA {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.write_str(s);
+        Ok(())
     }
 }

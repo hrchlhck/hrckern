@@ -28,6 +28,14 @@ impl ColorByte {
     pub fn new(background: Color, foreground: Color) -> Self {
         ColorByte{background, foreground}
     }
+
+    pub fn bg(&self) -> Color {
+        self.background
+    }
+
+    pub fn fg(&self) -> Color {
+        self.foreground
+    }
 }
 
 impl Into<u8> for ColorByte {
