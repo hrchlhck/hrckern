@@ -1,6 +1,7 @@
 ; https://os.phil-opp.com/multiboot-kernel/
 
 global start
+global magic
 extern long_mode_start
 
 section .text
@@ -15,6 +16,7 @@ error:
 
 start:
     mov esp, stack_top
+    mov [magic], eax
 
     call check_multiboot
     call check_cpuid
@@ -138,7 +140,6 @@ enable_paging:
     ret
 
 section .bss
-align 4096
 p4_table:
     resb 4096
 p3_table:
@@ -148,8 +149,11 @@ p2_table:
 stack_bottom:
     resb 64
 stack_top:
+align 8
+magic:              resq 1
 
 section .rodata
+
 gdt64:
     dq 0 ; zero entry
 .code: equ $ - gdt64

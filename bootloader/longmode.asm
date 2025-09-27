@@ -1,5 +1,6 @@
 global long_mode_start
 extern kmain
+extern magic
 
 section .text
 bits 64
@@ -18,7 +19,6 @@ long_mode_start:
     mov fs, ax
     mov gs, ax
 
-    call kmain
+    mov rdi, [magic]
 
-    call okay
-    
+    call kmain

@@ -13,5 +13,5 @@ iso:
 	grub-mkrescue -o hrckern.iso isofiles
 
 clean:
-	rm *.o *.bin *.a
+	rm *.o *.a
 	rm -rf isofiles
