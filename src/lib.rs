@@ -47,8 +47,11 @@ pub extern "C" fn kmain(magic: u64) {
         }
     }
 
+    for i in 0..27 {
+        println!("Line {}", i);    
+    }
+
     println!("hello {}", "ola");
-    teste();
     panic!("ee");
 }
 

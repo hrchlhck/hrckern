@@ -20,7 +20,7 @@ Kernel simples feito em Rust. Baseado no livro [Writing an OS in Rust](https://o
   - [ ] Conversão de `char` para inteiro
   - [ ] Conversão de `char` para float
   - [x] Inserir `char` em uma posição específica
-  - [ ] Rolagem da tela
+  - [x] Rolagem da tela
 - [ ] Interrupções
   - [ ] IRQ
     - [ ] Teclado

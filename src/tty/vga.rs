@@ -56,6 +56,36 @@ impl VGA {
         ((x + self.max_cols * y) * 2) as u16
     }
 
+    fn clear_line(&mut self, line: u16) {
+        for i in 0..self.max_cols {
+            let v = self.get_pos(i, line);
+
+            unsafe {
+                *self.buffer.offset(v as isize) = b' ';
+                *self.buffer.offset((v+1) as isize) = ColorByte::new(self.default_bg, self.default_fg).into();
+            }
+        }
+    }
+
+    fn scroll(&mut self) {
+        if self.row_pos >= self.max_rows {
+             for i in 1..self.max_rows {
+                for j in 0..self.max_cols {
+                    let pos = self.get_pos(j, i);
+                    let pos_prev =  self.get_pos(j, i - 1);
+
+                    unsafe {
+                        *self.buffer.offset(pos_prev as isize) = *self.buffer.offset(pos as isize);
+                        *self.buffer.offset((pos_prev + 1) as isize) = *self.buffer.offset((pos+1) as isize);
+                    }
+                }
+            }
+            self.row_pos -= 1;
+            self.col_pos = 0;
+            self.cursor = self.get_pos(self.col_pos, self.row_pos);
+        }
+    }
+
     fn step(&mut self) {
         self.col_pos += 1;
         if self.col_pos >= self.max_cols {
@@ -105,6 +135,7 @@ impl VGA {
     // https://os.phil-opp.com/vga-text-mode/#printing
     pub fn write_str(&mut self, s: &str) {
         for b in s.bytes() {
+            self.scroll();
             match b {
                 b'\n' => self.newline(),
                 0x20..=0x7e => self.putc(b),
