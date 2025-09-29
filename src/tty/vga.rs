@@ -33,6 +33,26 @@ impl VGA {
                 *self.buffer.offset(i as isize * 2 + 1) = ColorByte::new(self.bg, self.fg).into();
             }
         }
+        self.set_header();
+    }
+
+    fn set_header(&mut self) {
+        for i in 0..(self.max_cols) {
+            unsafe {
+                *self.buffer.offset(i as isize * 2) = b'\0';
+                *self.buffer.offset(i as isize * 2 + 1) = ColorByte::new(Color::LightBlue, self.fg).into();
+            }
+        }
+
+        let header: &str = "HRCKERN 0.0.0";
+        let len_header = (header.len()) as u16;
+
+        self.cursor = (self.max_cols - len_header - 1);
+        self.col_pos = (self.max_cols - len_header - 1) / 2;
+        self.row_pos = 0;
+
+        self.write_str_color(header, Color::LightBlue);
+        self.newline();
     }
 
     pub fn reset_color(&mut self) {
@@ -46,7 +66,7 @@ impl VGA {
     }
 
     pub fn change_background_color(&mut self, bg_color: Color) {
-        for i in 0..(self.max_cols * self.max_rows) {
+        for i in self.max_rows..(self.max_cols * self.max_rows) {
             let i: isize = i as isize * 2 + 1;
 
             unsafe {
@@ -67,7 +87,7 @@ impl VGA {
     }
 
     fn clear_line(&mut self, line: u16) {
-        for i in 0..self.max_cols {
+        for i in self.max_cols..self.max_cols*2 {
             let v = self.get_pos(i, line);
 
             unsafe {
@@ -79,10 +99,10 @@ impl VGA {
 
     fn scroll(&mut self) {
         if self.row_pos >= self.max_rows {
-             for i in 1..self.max_rows {
+             for i in 2..self.max_rows {
                 for j in 0..self.max_cols {
                     let pos = self.get_pos(j, i);
-                    let pos_prev =  self.get_pos(j, i - 1);
+                    let pos_prev =  self.get_pos(j, i-1);
 
                     unsafe {
                         *self.buffer.offset(pos_prev as isize) = *self.buffer.offset(pos as isize);
@@ -97,11 +117,11 @@ impl VGA {
     }
 
     fn step(&mut self) {
-        self.col_pos += 1;
         if self.col_pos >= self.max_cols {
             self.col_pos = 0;
             self.row_pos += 1;
         }
+        self.col_pos += 1;
         self.cursor = self.get_pos(self.col_pos, self.row_pos);
     }
 
@@ -150,6 +170,17 @@ impl VGA {
                 b'\n' => self.newline(),
                 0x20..=0x7e => self.putc(b),
                 _ => self.putc(0xfe), // not part of printable ASCII range
+            }
+        }
+    }
+
+    fn write_str_color(&mut self, s: &str, bg: Color) {
+        for b in s.bytes() {
+            self.scroll();
+            match b {
+                b'\n' => self.newline(),
+                0x20..=0x7e => self.putc_color(b, bg, self.fg),
+                _ => self.putc_color(0xfe, bg, self.fg), // not part of printable ASCII range
             }
         }
     }

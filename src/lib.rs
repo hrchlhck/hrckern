@@ -40,11 +40,11 @@ pub extern "C" fn kmain(magic: u64) {
         stdout.lock().set_char_at(b'-', Color::White, i, 13);
     }
 
-    for i in 0..36 {
+    for i in 0..50 {
         println!("Line {}", i);    
     }
 
-    panic!("ee");
+    panic!("It works");
 }
 
 
