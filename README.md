@@ -11,17 +11,16 @@ Kernel simples feito em Rust. Baseado no livro [Writing an OS in Rust](https://o
 
 # TODO
 - [x] Implementar *bootloader* com suporte a multiboot e long mode (Implementação do próprio livro)
-- [ ] TTY simples
+- [x] TTY simples
   - [x] Colocar `char` na tela
   - [x] Escrever `&str`
   - [x] Quebra de linha
   - [x] Alterar cor do terminal
   - [x] Implementação `format!` e `println!` 
-  - [ ] Conversão de `char` para inteiro
-  - [ ] Conversão de `char` para float
   - [x] Inserir `char` em uma posição específica
   - [x] Rolagem da tela
 - [ ] Interrupções
+  - [ ] IDT
   - [ ] IRQ
     - [ ] Teclado
     - [ ] Mouse
