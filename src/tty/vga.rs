@@ -1,8 +1,18 @@
 use super::color::{Color, ColorByte};
 use core::fmt;
 
+pub struct Ptr(pub *mut u8);
+unsafe impl Sync for Ptr { }
+unsafe impl Send for Ptr { }
+
+impl Ptr {
+    pub fn offset(&mut self, i: isize) -> *mut u8 {
+        unsafe { self.0.offset(i) }
+    }
+}
+
 pub struct VGA {
-    pub buffer: *mut u8,
+    pub buffer: Ptr,
     pub col_pos: u16,
     pub row_pos: u16,
     pub max_rows: u16,
@@ -106,7 +116,7 @@ impl VGA {
         }
     }
 
-    fn get_current_bg_color(&self) -> Color {
+    fn get_current_bg_color(&mut self) -> Color {
         unsafe {
             (*self.buffer.offset((self.cursor + 1) as isize) >> 4).into()
         }

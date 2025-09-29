@@ -4,9 +4,10 @@
 mod std;
 mod tty;
 mod multiboot;
+mod interrupt;
 
 use tty::color::Color;
-use std::STDOUT;
+use std::stdout;
 use multiboot::EAXE820;
 
 use core::arch::asm;
@@ -29,29 +30,20 @@ fn teste() {
 
 #[unsafe(no_mangle)]
 pub extern "C" fn kmain(magic: u64) {
-    let stdout = &raw mut STDOUT;
-
-    
-    unsafe { 
-        (*stdout).clear();
-    }
+    stdout.lock().clear();
     
     if magic == multiboot::MULTIBOOT2_MAGIC_NUMBER {
         println!("Multiboot2 compliant bootloader");
     }
 
-    
-    unsafe { 
-        for i in 0..80 {
-            (*stdout).set_char_at(b'-', Color::White, i, 13);
-        }
+    for i in 0..80 {
+        stdout.lock().set_char_at(b'-', Color::White, i, 13);
     }
 
-    for i in 0..27 {
+    for i in 0..36 {
         println!("Line {}", i);    
     }
 
-    println!("hello {}", "ola");
     panic!("ee");
 }
 
