@@ -1,43 +1,43 @@
 # hrckern
 
-Kernel simples feito em Rust. Baseado no livro [Writing an OS in Rust](https://os.phil-opp.com/).
+Simple kernel written in Rust. Based on ["Writing an OS in Rust"](https://os.phil-opp.com/).
 
-# Dependências
+# Dependencies
 - `qemu v10.1.0`
 - `rust v1.92.0-nightly`
 
-# Importante
-- O código é desenvolvido sobre a arquitetura x86
+# Must know
+- The code is designed for x86 processors
 
 # TODO
-- [x] Implementar *bootloader* com suporte a multiboot e long mode (Implementação do próprio livro)
-- [x] TTY simples
-  - [x] Colocar `char` na tela
-  - [x] Escrever `&str`
-  - [x] Quebra de linha
-  - [x] Alterar cor do terminal
-  - [x] Implementação `format!` e `println!` 
-  - [x] Inserir `char` em uma posição específica
-  - [x] Rolagem da tela
-- [ ] Interrupções
+- [x] Implement a multiboot compliant *bootloader* within long mode (book's implementation)
+- [x] Simple TTY
+  - [x] Put `char` at
+  - [x] Write `&str`
+  - [x] Line break
+  - [x] Change color
+  - [x] `format!` and `println!` macros
+  - [x] Put `char` at specific position
+  - [x] Scroll
+- [ ] Interrupts
   - [ ] IDT
   - [ ] IRQ
-    - [ ] Teclado
+    - [ ] Keyboard
     - [ ] Mouse
 
-# Executando o kernel
-Para executar o kernel precisamos do `make` e do Docker. Nele conseguimos construir um ambiente que possui as ferramentas necessárias para a montagem, compilação e criação do `.iso` do kernel.
+# Running
+To run the kernel with QEMU we need `make` and Docker. I used Docker mainly to wrap the needed tools for building, compiling, linking and the kernel's `.iso`. There is no need to install any of those tools on your host OS.
 
-##### Para criar a imagem
+##### Create image
 ```bash
 make build-env
 ```
 
-##### Para executar
+##### Executing
 ```bash
 make
 ```
 
-Exemplo:
+Example:
 
 ![assets/exemplo-kernel.png](assets/exemplo-kernel.png)
