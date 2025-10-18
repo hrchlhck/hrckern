@@ -4,7 +4,6 @@ ENTRY(start)
 INPUT
 (
 	boot.o 
-	longmode.o 
 	libhrckern.a
 )
 

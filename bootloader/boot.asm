@@ -2,7 +2,9 @@
 
 global start
 global magic
-extern long_mode_start
+global long_mode_start
+extern kmain
+extern magic
 
 section .multiboot_header
 header_start:
@@ -153,6 +155,19 @@ enable_paging:
     mov cr0, eax
 
     ret
+
+bits 64
+long_mode_start:
+    mov ax, 0
+    mov ss, ax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    mov rdi, [magic]
+
+    call kmain
 
 section .bss
 p4_table:
