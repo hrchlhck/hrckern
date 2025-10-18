@@ -1,6 +1,15 @@
 /* https://wiki.osdev.org/Bare_Bones#Verifying_Multiboot */
 
 ENTRY(start)
+INPUT
+(
+	boot.o 
+	longmode.o 
+	libhrckern.a
+)
+
+OUTPUT(kernel.bin)
+
 SECTIONS {
     . = 2M;
 
