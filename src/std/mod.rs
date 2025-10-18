@@ -9,13 +9,12 @@ const DEFAULT_FG_COLOR: Color = Color::White;
 const MAX_SCREEN_WIDTH: u8 = 80;
 const MAX_SCREEN_HEIGHT: u8 = 25;
 
-
 lazy_static!(
     pub static ref stdout: Mutex<VGA> = Mutex::new(VGA {
         buffer: Ptr(0xb8000 as *mut u8),
-        row_pos: 0, 
+        row_pos: 1, 
         col_pos: 0, 
-        cursor: 0,
+        cursor: (MAX_SCREEN_WIDTH * 2) as u16,
         max_rows: MAX_SCREEN_HEIGHT as u16, 
         max_cols: MAX_SCREEN_WIDTH as u16,
         fg: DEFAULT_FG_COLOR,

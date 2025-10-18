@@ -1,5 +1,5 @@
 use crate::tty::color::{Color, ColorByte};
-use super::STDOUT;
+use super::stdout;
 
 use core::fmt::{self, Write};
 use core::panic::PanicInfo;
@@ -39,12 +39,10 @@ pub fn panic_handler(_info: &PanicInfo) -> ! {
 }
 
 fn _write_color(args: fmt::Arguments, bg: Color, fg: Color) {
-    let stdout = &raw mut STDOUT;
-    unsafe {
-        (*stdout).set_color(ColorByte::new(bg, fg));
-        (*stdout).write_fmt(args).unwrap();
-        (*stdout).reset_color();
-    }
+    let mut writer = stdout.lock();
+    writer.set_color(ColorByte::new(bg, fg));
+    writer.write_fmt(args).unwrap();
+    writer.reset_color();
 }
 
 #[doc(hidden)]
