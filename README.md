@@ -29,22 +29,6 @@ The project serves as an educational implementation of a basic OS kernel using R
 
 ---
 
-## Project Structure
-
-```text
-hrckern/
-├── Cargo.toml           # Rust project manifest
-├── Makefile             # Build and run commands
-├── bootloader/          # Bootloader setup and multiboot headers
-├── src/                 # Core kernel logic (entry, memory, interrupts, etc.)
-│   ├── lib.rs
-│   ├── vga_buffer.rs    # TTY driver implementation
-│   ├── interrupts.rs    # Interrupt descriptor table (WIP)
-│   └── ...
-```
-
----
-
 ## Features
 
 ### Bootloader
